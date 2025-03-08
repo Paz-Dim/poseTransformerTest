@@ -1,0 +1,6 @@
+*.o
+Makefile
+*.stash
+*.user
+poseTransformer
+moc_*
