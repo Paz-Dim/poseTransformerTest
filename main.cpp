@@ -27,6 +27,12 @@ int main(int argc, char *argv[])
         qDebug () << "Can't load skeleton";
         return a.exec();
     }
+    // Load matrices
+    if (!skeleton.loadTransforms("Data/inverse_bind_pose.json", "Data/new_pose.json"))
+    {
+        qDebug () << "Can't load transforms";
+        return a.exec();
+    }
 
     // Save modified mesh
     if (!meshProcessor.save("/tmp/modifiedMesh.obj"))
