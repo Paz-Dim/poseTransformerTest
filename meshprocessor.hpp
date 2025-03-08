@@ -26,11 +26,10 @@ public:
     };
 
     // Methods
-    CMeshProcessor();
     // Load mesh from file
-    void load(const QString &filename);
+    bool load(const QString &filename);
     // Save mesh into file
-    void save(const QString &filename);
+    bool save(const QString &filename);
     // Get reference to vertices array
     std::vector<FVector> &getVertices();
 

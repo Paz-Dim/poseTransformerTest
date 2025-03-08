@@ -1,11 +1,6 @@
 #include "meshprocessor.hpp"
 
-CMeshProcessor::CMeshProcessor()
-{
-}
-
-
-void CMeshProcessor::load(const QString &filename)
+bool CMeshProcessor::load(const QString &filename)
 {
     // Remove old data
     m_mesh.vertices.clear();
@@ -26,16 +21,20 @@ void CMeshProcessor::load(const QString &filename)
 
     // Open the OBJ file and populate the mesh while parsing it
     auto ifs = std::ifstream(filename.toStdString());
-    assert(ifs);
+    if (!ifs)
+        return false;
     const auto result = thinks::ReadObj(ifs, addPosition, addFace);
     ifs.close();
 
     // Some sanity checks
-    assert(result.position_count == m_mesh.vertices.size() && "bad position count");
+    if (result.position_count != m_mesh.vertices.size() && "bad position count")
+        return false;
+
+    return true;
 }
 
 
-void CMeshProcessor::save(const QString &filename)
+bool CMeshProcessor::save(const QString &filename)
 {
     // Positions
     m_posCounter = 0;
@@ -70,16 +69,22 @@ void CMeshProcessor::save(const QString &filename)
     };
 
     // Open the OBJ file and pass in the mappers, which will be called
-    // internally to write the contents of the mesh to the file.
+    // internally to write the contents of the mesh to the file
     auto ofs = std::ofstream(filename.toStdString());
-    assert(ofs);
+    if (!ofs)
+        return false;
     const auto result = thinks::WriteObj(ofs, posMapper, faceMapper);
     ofs.close();
 
-    // Some sanity checks.
-    assert(result.position_count == m_mesh.vertices.size() && "bad position count");
-    assert(result.face_count == m_mesh.indices.size() / 3 && "bad face count");
-    assert(indexCounter == m_mesh.indices.size() && "trailing indices");
+    // Some sanity checks
+    if (result.position_count != m_mesh.vertices.size())
+        return false;
+    if (result.face_count != m_mesh.indices.size() / 3)
+        return false;
+    if (indexCounter != m_mesh.indices.size())
+        return false;
+
+    return true;
 }
 
 
