@@ -65,19 +65,25 @@ void CSkeleton::applyTransforms()
     std::vector<CMeshProcessor::FVector> &vertices = m_meshProcessor.getVertices();
     for (quint32 iVertex = 0; iVertex < vertices.size(); iVertex++)
     {
-        TTransformCoords originVertex(vertices[iVertex]);
-        TTransformCoords transformedVertex;
+        mutil::Vector4 originVertex;
+        originVertex.vec[0] = vertices[iVertex].X;
+        originVertex.vec[1] = vertices[iVertex].Y;
+        originVertex.vec[2] = vertices[iVertex].Z;
+        originVertex.vec[3] = 1.0f;
+        mutil::Vector4 transformedVertex(0.0f, 0.0f, 0.0f, 1.0f);
 
         // Apply all bones transforms
         for (const std::pair<qint32, float> &bone : m_verticesBones[iVertex])
-            transformedVertex = transformedVertex + transformCoords(m_newTransform[bone.first + 1], originVertex) * bone.second;
+            transformedVertex += m_newTransform[bone.first + 1] * m_inverseTransform[bone.first + 1] * originVertex * bone.second;
 
-        vertices[iVertex] = transformedVertex.getVector();
+        vertices[iVertex].X = transformedVertex.vec[0] / transformedVertex.vec[3];
+        vertices[iVertex].Y = transformedVertex.vec[1] / transformedVertex.vec[3];
+        vertices[iVertex].Z = transformedVertex.vec[2] / transformedVertex.vec[3];
     }
 }
 
 
-bool CSkeleton::loadTransform(const QString &filename, std::vector<TTransformMatrix> &transform)
+bool CSkeleton::loadTransform(const QString &filename, std::vector<mutil::Matrix4> &transform)
 {
     // Open transform file
     QFile transformFile;
@@ -104,21 +110,8 @@ bool CSkeleton::loadTransform(const QString &filename, std::vector<TTransformMat
             return false;
         // Save bone values
         for (qint32 iValue = 0; iValue < TRANSFORM_MATRIX_LENGTH; iValue++)
-            transform[iBone].values[iValue] = boneTransform[iValue].toDouble();
+            transform[iBone].mat[iValue] = boneTransform[iValue].toDouble();
     }
 
     return true;
-}
-
-
-CSkeleton::TTransformCoords CSkeleton::transformCoords(const TTransformMatrix &matrix, const TTransformCoords &coords) const
-{
-    TTransformCoords result;
-
-    result.X = matrix.values[0] * coords.X + matrix.values[1] * coords.Y +matrix.values[2] * coords.Z +matrix.values[3] * coords.W;
-    result.Y = matrix.values[4] * coords.X + matrix.values[5] * coords.Y +matrix.values[6] * coords.Z +matrix.values[7] * coords.W;
-    result.Z = matrix.values[8] * coords.X + matrix.values[9] * coords.Y +matrix.values[10] * coords.Z +matrix.values[11] * coords.W;
-    result.W = matrix.values[12] * coords.X + matrix.values[13] * coords.Y +matrix.values[14] * coords.Z +matrix.values[15] * coords.W;
-
-    return result;
 }

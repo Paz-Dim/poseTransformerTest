@@ -26,5 +26,37 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     meshprocessor.hpp \
+    mutil/mat/intmatrix2.h \
+    mutil/mat/intmatrix3.h \
+    mutil/mat/intmatrix4.h \
+    mutil/mat/mat.h \
+    mutil/mat/mat_impl.h \
+    mutil/mat/mat_types.h \
+    mutil/mat/matrix2.h \
+    mutil/mat/matrix3.h \
+    mutil/mat/matrix4.h \
+    mutil/math/f_math.h \
+    mutil/math/fmat_math.h \
+    mutil/math/fmat_math_defs.h \
+    mutil/math/fmat_transform.h \
+    mutil/math/i_math.h \
+    mutil/math/math.h \
+    mutil/math/noise.h \
+    mutil/mutil.h \
+    mutil/quat/quaternion.h \
+    mutil/quat/quaternion_impl.h \
+    mutil/settings.h \
+    mutil/vec/intvector2.h \
+    mutil/vec/intvector3.h \
+    mutil/vec/intvector4.h \
+    mutil/vec/vec.h \
+    mutil/vec/vec_impl.h \
+    mutil/vec/vec_types.h \
+    mutil/vec/vector2.h \
+    mutil/vec/vector3.h \
+    mutil/vec/vector4.h \
     obj_io.h \
     skeleton.hpp
+
+DISTFILES += \
+    mutil/matrixutil.natvis
