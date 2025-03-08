@@ -29,15 +29,18 @@ public:
     CMeshProcessor();
     // Load mesh from file
     void load(const QString &filename);
+    // Save mesh into file
+    void save(const QString &filename);
+    // Get reference to vertices array
+    std::vector<FVector> &getVertices();
 
 protected:
     // Types
     // Position type
     typedef thinks::ObjPosition<float, 3> TPos;
     // Face type
-    typedef thinks::ObjTriangleFace<thinks::ObjIndex<std::uint16_t>> TFace;
-    // Normal type
-    typedef thinks::ObjNormal<float> TNormal;
+    typedef thinks::ObjIndex<uint32_t> TObjIndex;
+    typedef thinks::ObjTriangleFace<TObjIndex> TFace;
 
     // Fields
     // Processed mesh
