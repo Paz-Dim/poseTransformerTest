@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
         return a.exec();
     }
 
+    // Apply loaded transforms
+    skeleton.applyTransforms();
+
     // Save modified mesh
     if (!meshProcessor.save("/tmp/modifiedMesh.obj"))
     {
