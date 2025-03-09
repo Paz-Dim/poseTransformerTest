@@ -36,10 +36,8 @@ protected:
     CMeshProcessor &m_meshProcessor;
     // Array of vertices and assigned bones
     std::vector<TVertexBone> m_verticesBones;
-    // Inverse transform
-    std::vector<mutil::Matrix4> m_inverseTransform;
-    // New transform
-    std::vector<mutil::Matrix4> m_newTransform;
+    // Combined transforms: new * inversed
+    std::vector<mutil::Matrix4> m_transforms;
 
     // Methods
     // Load transform from file

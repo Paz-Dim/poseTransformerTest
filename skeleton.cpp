@@ -55,8 +55,21 @@ bool CSkeleton::loadSkeleton(const QString &filename)
 
 bool CSkeleton::loadTransforms(const QString &inverseFilename, const QString &newFilename)
 {
-    return loadTransform(inverseFilename, m_inverseTransform) &&
-            loadTransform(newFilename, m_newTransform);
+    std::vector<mutil::Matrix4> newTransform;
+    std::vector<mutil::Matrix4> inversedTransform;
+    if (!loadTransform(inverseFilename, newTransform))
+        return false;
+    if (!loadTransform(newFilename, inversedTransform))
+        return false;
+    if (newTransform.size() != inversedTransform.size())
+        return false;
+
+    // Create multiplied transforms
+    m_transforms.resize(newTransform.size());
+    for (quint32 iTransform = 0; iTransform < m_transforms.size(); iTransform++)
+        m_transforms[iTransform] = inversedTransform[iTransform] * newTransform[iTransform];
+
+    return true;
 }
 
 
@@ -74,11 +87,12 @@ void CSkeleton::applyTransforms()
 
         // Apply all bones transforms
         for (const std::pair<qint32, float> &bone : m_verticesBones[iVertex])
-            transformedVertex += m_newTransform[bone.first + 1] * m_inverseTransform[bone.first + 1] * originVertex * bone.second;
+            transformedVertex += m_transforms[bone.first + 1] * originVertex * bone.second;
 
-        vertices[iVertex].X = transformedVertex.vec[0] / transformedVertex.vec[3];
-        vertices[iVertex].Y = transformedVertex.vec[1] / transformedVertex.vec[3];
-        vertices[iVertex].Z = transformedVertex.vec[2] / transformedVertex.vec[3];
+        // TODO: Maybe should be divided by vertices[iVertex].W
+        vertices[iVertex].X = transformedVertex.vec[0];
+        vertices[iVertex].Y = transformedVertex.vec[1];
+        vertices[iVertex].Z = transformedVertex.vec[2];
     }
 }
 

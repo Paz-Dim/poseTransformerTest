@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #include <QDebug>
 
 #include "meshprocessor.hpp"
@@ -34,8 +35,13 @@ int main(int argc, char *argv[])
         return a.exec();
     }
 
+    QElapsedTimer nsecsTimer;
+    nsecsTimer.start();
+
     // Apply loaded transforms
     skeleton.applyTransforms();
+
+    qDebug() << nsecsTimer.nsecsElapsed() << "nanoseconds";
 
     // Save modified mesh
     if (!meshProcessor.save("/tmp/modifiedMesh.obj"))
