@@ -16,8 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        meshprocessor.cpp \
-        skeleton.cpp
+        skeletalMesh.cpp \
+        skeletalTransform.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -25,7 +25,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    meshprocessor.hpp \
     mutil/mat/intmatrix2.h \
     mutil/mat/intmatrix3.h \
     mutil/mat/intmatrix4.h \
@@ -56,7 +55,8 @@ HEADERS += \
     mutil/vec/vector3.h \
     mutil/vec/vector4.h \
     obj_io.h \
-    skeleton.hpp
+    skeletalMesh.hpp \
+    skeletalTransform.hpp
 
 DISTFILES += \
     mutil/matrixutil.natvis

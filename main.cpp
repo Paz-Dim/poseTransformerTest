@@ -2,8 +2,8 @@
 #include <QElapsedTimer>
 #include <QDebug>
 
-#include "meshprocessor.hpp"
-#include "skeleton.hpp"
+#include "skeletalMesh.hpp"
+#include "skeletalTransform.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -12,24 +12,18 @@ int main(int argc, char *argv[])
     qDebug() << "Pose transformer start";
 
     // Mesh
-    CMeshProcessor meshProcessor;
+    CSkeletalMesh meshProcessor;
     // Load origin mesh
-    if (!meshProcessor.load("Data/test_mesh.obj"))
+    if (!meshProcessor.load("Data/test_mesh.obj", "Data/bone_weight.json"))
     {
         qDebug() << "Can't load mesh";
         return a.exec();
     }
 
-    // Skeleton
-    CSkeleton skeleton(meshProcessor);
-    // Load sekelton
-    if (!skeleton.loadSkeleton("Data/bone_weight.json"))
-    {
-        qDebug () << "Can't load skeleton";
-        return a.exec();
-    }
+    // Transform
+    CSkeletalTransform transform(meshProcessor);
     // Load matrices
-    if (!skeleton.loadTransforms("Data/inverse_bind_pose.json", "Data/new_pose.json"))
+    if (!transform.loadTransforms("Data/inverse_bind_pose.json", "Data/new_pose.json"))
     {
         qDebug () << "Can't load transforms";
         return a.exec();
@@ -39,12 +33,12 @@ int main(int argc, char *argv[])
     nsecsTimer.start();
 
     // Apply loaded transforms
-    skeleton.applyTransforms();
+    transform.applyTransforms();
 
     qDebug() << nsecsTimer.nsecsElapsed() << "nanoseconds";
 
     // Save modified mesh
-    if (!meshProcessor.save("/tmp/modifiedMesh.obj"))
+    if (!meshProcessor.saveMesh("/tmp/modifiedMesh.obj"))
     {
         qDebug() << "Can't save mesh";
         return a.exec();
