@@ -10,14 +10,18 @@
 #include "skeletalMesh.hpp"
 #include "mutil/mutil.h"
 
-// Class to apply transform to skeletal mesh
+/* Class to apply transform to skeletal mesh. Uses mutil libarry for vector/matrix math.
+ * Modifies skeletal mesh vertices directly. */
 class CSkeletalTransform
 {
 public:
+    // Methods
     CSkeletalTransform(CSkeletalMesh &skeletalMesh);
     // Load transforms
     bool loadTransforms(const QString &inverseFilename, const QString &newFilename);
-    // Apply transforms
+    /* Apply transforms
+     * TODO: Modifies vertices in-place. For real usage the origin vertices
+     * array should be read-only (as reference pose), function will create and return modified array. */
     void applyTransforms();
 
 protected:
@@ -28,7 +32,9 @@ protected:
     // Fields
     // Reference to skeletal mesh
     CSkeletalMesh &m_skeletalMesh;
-    // Combined transforms: new * inversed
+    /* Array of pre-multiplied transforms for all bones.
+     * TODO: For some reason, bones start from 1th element. */
+    // Combined transforms for bones: iBone -> new * inverse
     std::vector<mutil::Matrix4> m_transforms;
 
     // Methods

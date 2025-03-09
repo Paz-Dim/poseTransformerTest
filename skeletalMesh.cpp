@@ -25,7 +25,7 @@ bool CSkeletalMesh::saveMesh(const QString &filename)
         if (m_posCounter == m_mesh.vertices.size())
             return thinks::ObjEnd<TPos>();
 
-        // Map indicates that additional positions may be available after this one.
+        // Map indicates that additional positions may be available after this one
         auto result = thinks::ObjMap(TPos(m_mesh.vertices[m_posCounter].position.X,
                                           m_mesh.vertices[m_posCounter].position.Y,
                                           m_mesh.vertices[m_posCounter].position.Z));
@@ -37,7 +37,7 @@ bool CSkeletalMesh::saveMesh(const QString &filename)
     quint32 indexCounter = 0;
     auto faceMapper = [this, &indexCounter]()
     {
-        // Check that there are 3 more indices (trailing indices handled below).
+        // Check that there are 3 more indices (trailing indices handled below)
         if ((m_mesh.indices.size() - indexCounter) < 3)
             return thinks::ObjEnd<TFace>();
 
@@ -49,8 +49,8 @@ bool CSkeletalMesh::saveMesh(const QString &filename)
         return result;
     };
 
-    // Open the OBJ file and pass in the mappers, which will be called
-    // internally to write the contents of the mesh to the file
+    /* Open the OBJ file and pass in the mappers, which will be called
+     * internally to write the contents of the mesh to the file */
     auto ofs = std::ofstream(filename.toStdString());
     if (!ofs)
         return false;
@@ -108,7 +108,7 @@ bool CSkeletalMesh::loadMesh(const QString &filename)
 
 void CSkeletalMesh::readPosCallback(const TPos &pos)
 {
-    // Check if we need a new vertex.
+    // Check if we need a new vertex
     if (m_mesh.vertices.size() <= m_posCounter)
         m_mesh.vertices.emplace_back();
 
@@ -120,7 +120,7 @@ void CSkeletalMesh::readPosCallback(const TPos &pos)
 
 void CSkeletalMesh::readFaceCallback(const TFace &face)
 {
-    // Add triangle indices into the linear storage of our mesh class.
+    // Add triangle indices into the linear storage of our mesh class
     m_mesh.indices.push_back(face.values[0].value);
     m_mesh.indices.push_back(face.values[1].value);
     m_mesh.indices.push_back(face.values[2].value);
@@ -155,11 +155,11 @@ bool CSkeletalMesh::loadSkeleton(const QString &filename)
         // Get weights and indices fields
         QJsonArray jsonWeights = rootArray[iVertex].toObject().value("weight").toArray();
         QJsonArray jsonIndices = rootArray[iVertex].toObject().value("index").toArray();
-        if ((jsonWeights.size() != 4) || (jsonIndices.size() != 4))
+        if ((jsonWeights.size() != VERTEX_BONES_MAX) || (jsonIndices.size() != VERTEX_BONES_MAX))
             return false;
 
         // Convert JSON data to skeleton and store it
-        for (qint32 iRow = 0; iRow < 4; iRow++)
+        for (qint32 iRow = 0; iRow < VERTEX_BONES_MAX; iRow++)
         {
             // Bone index, beginning from 1
             quint32 boneIndex = jsonIndices[iRow].toInt();

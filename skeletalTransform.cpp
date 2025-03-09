@@ -9,18 +9,18 @@ CSkeletalTransform::CSkeletalTransform(CSkeletalMesh &skeletalMesh) :
 bool CSkeletalTransform::loadTransforms(const QString &inverseFilename, const QString &newFilename)
 {
     std::vector<mutil::Matrix4> newTransform;
-    std::vector<mutil::Matrix4> inversedTransform;
+    std::vector<mutil::Matrix4> inverseTransform;
     if (!loadTransform(inverseFilename, newTransform))
         return false;
-    if (!loadTransform(newFilename, inversedTransform))
+    if (!loadTransform(newFilename, inverseTransform))
         return false;
-    if (newTransform.size() != inversedTransform.size())
+    if (newTransform.size() != inverseTransform.size())
         return false;
 
     // Create multiplied transforms
     m_transforms.resize(newTransform.size());
     for (quint32 iTransform = 0; iTransform < m_transforms.size(); iTransform++)
-        m_transforms[iTransform] = inversedTransform[iTransform] * newTransform[iTransform];
+        m_transforms[iTransform] = inverseTransform[iTransform] * newTransform[iTransform];
 
     return true;
 }
@@ -31,6 +31,7 @@ void CSkeletalTransform::applyTransforms()
     std::vector<CSkeletalMesh::FVertex> &vertices = m_skeletalMesh.getVertices();
     for (quint32 iVertex = 0; iVertex < vertices.size(); iVertex++)
     {
+        // Convert vertex position to homogeneous coordinates
         mutil::Vector4 originVertex;
         originVertex.vec[0] = vertices[iVertex].position.X;
         originVertex.vec[1] = vertices[iVertex].position.Y;
@@ -43,6 +44,7 @@ void CSkeletalTransform::applyTransforms()
             if (vertices[iVertex].weights[iRow].first > 0)
                 transformedVertex += m_transforms[vertices[iVertex].weights[iRow].first] * originVertex * vertices[iVertex].weights[iRow].second;
 
+        // Save updated vertex position
         // TODO: Maybe should be divided by vertices[iVertex].W
         vertices[iVertex].position.X = transformedVertex.vec[0];
         vertices[iVertex].position.Y = transformedVertex.vec[1];

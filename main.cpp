@@ -5,6 +5,12 @@
 #include "skeletalMesh.hpp"
 #include "skeletalTransform.hpp"
 
+static const QString MESH_FILENAME {"Data/test_mesh.obj"};
+static const QString WEIGHTS_FILENAME {"Data/bone_weight.json"};
+static const QString INVERSE_POSE_FILENAME {"Data/inverse_bind_pose.json"};
+static const QString NEW_POSE_FILENAME {"Data/new_pose.json"};
+static const QString RESULT_FILENAME {"/tmp/modifiedMesh.obj"};
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -14,7 +20,7 @@ int main(int argc, char *argv[])
     // Mesh
     CSkeletalMesh meshProcessor;
     // Load origin mesh
-    if (!meshProcessor.load("Data/test_mesh.obj", "Data/bone_weight.json"))
+    if (!meshProcessor.load(MESH_FILENAME, WEIGHTS_FILENAME))
     {
         qDebug() << "Can't load mesh";
         return a.exec();
@@ -23,7 +29,7 @@ int main(int argc, char *argv[])
     // Transform
     CSkeletalTransform transform(meshProcessor);
     // Load matrices
-    if (!transform.loadTransforms("Data/inverse_bind_pose.json", "Data/new_pose.json"))
+    if (!transform.loadTransforms(INVERSE_POSE_FILENAME, NEW_POSE_FILENAME))
     {
         qDebug () << "Can't load transforms";
         return a.exec();
@@ -38,7 +44,7 @@ int main(int argc, char *argv[])
     qDebug() << nsecsTimer.nsecsElapsed() << "nanoseconds";
 
     // Save modified mesh
-    if (!meshProcessor.saveMesh("/tmp/modifiedMesh.obj"))
+    if (!meshProcessor.saveMesh(RESULT_FILENAME))
     {
         qDebug() << "Can't save mesh";
         return a.exec();

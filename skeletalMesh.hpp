@@ -10,7 +10,7 @@
 
 #include "obj_io.h"
 
-// Skeletal mesh processor, load/save mesh, contains bone weights
+// Skeletal mesh, load/save mesh, contains bone weights. Uses obj_io library to parse OBJ file.
 class CSkeletalMesh
 {
 public:
@@ -19,6 +19,8 @@ public:
     static constexpr quint8 VERTEX_BONES_MAX {4};
 
     // Types
+    /* Vertices are transformed one by one, so we need to iterate through all affecting bones (relation 1 vertex - N bones).
+     * fixed-size weights array is used to store all elements in one place (as part of FVertex structure), to decrease cache misses. */
     // 3-float vector
     struct FVector
     {
@@ -37,6 +39,7 @@ public:
     struct FMesh
     {
       std::vector<FVertex> vertices;
+      // Faces as vertices indices
       std::vector<quint32> indices;
     };
 
